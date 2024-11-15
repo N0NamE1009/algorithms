@@ -1,0 +1,1162 @@
+%% The openany option is here just to remove the blank pages before a new chapter
+\documentclass[11pt,openany]{book}
+
+\title{Algoritmos}
+\usepackage{listings}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{pagenote}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+%% End notes to be printed as sections at the
+%% end of each chapter.
+\renewcommand*{\notedivision}{\section*{\notesname}}
+\renewcommand*{\pagenotesubhead}[1]{}
+
+
+%%%%%%%%%%%%% For customising the endnote markers. Comment these out if you don't want them.
+% To prefix each note number with the chapter number
+\renewcommand{\thepagenote}{\thechapter-\arabic{pagenote}}
+
+% To have a slightly different formatting for the endnote numbers in the text -- smaller text, sans-serif, square brackets
+\renewcommand\notenumintext[1]{\space{\footnotesize\sffamily[FN-#1]}}
+
+% To have a slightly different formatting for the endnote numbers in the notes section. Just the square brackets and sans-serif; normal size.
+\renewcommand\notenuminnotes[1]{{\sffamily[FN-#1] }}
+
+% If you want a different name/heading for the end notes
+\renewcommand{\notesname}{End Notes}
+%%%%%%%%%%%%% End customisation
+
+
+%% THIS LINE IS MANDATORY
+\makepagenote
+
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    breaklines=true,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    frame=single,
+    captionpos=b
+}
+
+\begin{document}
+
+\chapter{Algoritmos de ordenamiento}
+
+\section{Ordenamiento por comparación}
+\subsection{Burbuja (Bubble Sort)}
+El algoritmo de ordenamiento por burbuja (Bubble Sort) es uno de los algoritmos de ordenamiento más simples. Consiste en recorrer repetidamente la lista a ordenar, comparando elementos adyacentes e intercambiándolos si están en el orden incorrecto. Este proceso se repite hasta que no se requieran más intercambios.
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (cuando la lista ya está ordenada).
+    \item \textbf{Peor caso:} $O(n^2)$ (cuando la lista está ordenada en orden inverso).
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+BubbleSort(A)
+  n ← longitud(A)
+  repetir
+    intercambiado ← falso
+    para i ← 0 hasta n-2 hacer
+      si A[i] > A[i+1] entonces
+        intercambiar A[i] y A[i+1]
+        intercambiado ← verdadero
+      fin si
+    fin para
+  hasta que intercambiado = falso
+fin
+\end{verbatim}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+void bubbleSort(int arr[], int n) {
+    int temp;
+    for (int i = 0; i < n-1; i++) {
+        int swapped = 0;
+        for (int j = 0; j < n-i-1; j++) {
+            if (arr[j] > arr[j+1]) {
+                // Intercambiar
+                temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+                swapped = 1;
+            }
+        }
+        if (!swapped) break;
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 34, 25, 12, 22, 11, 90};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    bubbleSort(arr, n);
+    printf("Array ordenado: \n");
+    printArray(arr, n);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n-1):
+        swapped = False
+        for j in range(n-i-1):
+            if arr[j] > arr[j+1]:
+                # Intercambiar
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+                swapped = True
+        if not swapped:
+            break
+
+# Ejemplo de uso
+arr = [64, 34, 25, 12, 22, 11, 90]
+bubble_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+
+\subsection{Inserción (Insertion Sort)}
+
+El algoritmo de ordenamiento por inserción (Insertion Sort) ordena una lista construyendo gradualmente una porción ordenada. En cada iteración, un elemento se extrae de la parte desordenada y se inserta en la posición correcta dentro de la parte ordenada.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (cuando la lista ya está ordenada).
+    \item \textbf{Peor caso:} $O(n^2)$ (cuando la lista está ordenada en orden inverso).
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+InsertionSort(A)
+  n ← longitud(A)
+  para i ← 1 hasta n-1 hacer
+    clave ← A[i]
+    j ← i - 1
+    mientras j >= 0 y A[j] > clave hacer
+      A[j+1] ← A[j]
+      j ← j - 1
+    fin mientras
+    A[j+1] ← clave
+  fin para
+fin
+\end{verbatim}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+void insertionSort(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        int key = arr[i];
+        int j = i - 1;
+        // Mover elementos mayores que la clave hacia la derecha
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    insertionSort(arr, n);
+    printf("Array ordenado: \n");
+    printArray(arr, n);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        # Mover elementos mayores que la clave hacia la derecha
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+# Ejemplo de uso
+arr = [12, 11, 13, 5, 6]
+insertion_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsection{Selección (Selection Sort)}
+El algoritmo de ordenamiento por selección (Selection Sort) divide la lista en dos partes: una parte ordenada y otra desordenada. En cada iteración, encuentra el elemento más pequeño (o más grande, según el orden deseado) de la parte desordenada y lo intercambia con el primer elemento de esta parte.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n^2)$.
+    \item \textbf{Peor caso:} $O(n^2)$.
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+SelectionSort(A)
+  n ← longitud(A)
+  para i ← 0 hasta n-2 hacer
+    min_idx ← i
+    para j ← i+1 hasta n-1 hacer
+      si A[j] < A[min_idx] entonces
+        min_idx ← j
+      fin si
+    fin para
+    intercambiar A[i] y A[min_idx]
+  fin para
+fin
+\end{verbatim}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+void selectionSort(int arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        int min_idx = i;
+        for (int j = i + 1; j < n; j++) {
+            if (arr[j] < arr[min_idx]) {
+                min_idx = j;
+            }
+        }
+        // Intercambiar el minimo con el primer elemento desordenado
+        int temp = arr[min_idx];
+        arr[min_idx] = arr[i];
+        arr[i] = temp;
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {64, 25, 12, 22, 11};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    selectionSort(arr, n);
+    printf("Array ordenado: \n");
+    printArray(arr, n);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def selection_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        min_idx = i
+        for j in range(i + 1, n):
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        # Intercambiar el minimo con el primer elemento desordenado
+        arr[i], arr[min_idx] = arr[min_idx], arr[i]
+
+# Ejemplo de uso
+arr = [64, 25, 12, 22, 11]
+selection_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsection{Shell Sort}
+El algoritmo Shell Sort es una mejora del algoritmo de inserción. Se basa en comparar y mover elementos que están separados por un cierto \textit{gap} (o intervalo). A medida que el algoritmo avanza, el \textit{gap} se reduce gradualmente hasta que se convierte en 1, momento en el cual el algoritmo actúa como un ordenamiento por inserción.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n \log n)$ (dependiendo de la secuencia de incrementos).
+    \item \textbf{Peor caso:} $O(n^2)$ (con una mala elección del \textit{gap}).
+    \item \textbf{Caso promedio:} Depende de la secuencia de incrementos, pero generalmente mejor que $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+ShellSort(A)
+  n ← longitud(A)
+  gap ← n // 2
+  mientras gap > 0 hacer
+    para i ← gap hasta n-1 hacer
+      temp ← A[i]
+      j ← i
+      mientras j >= gap y A[j-gap] > temp hacer
+        A[j] ← A[j-gap]
+        j ← j - gap
+      fin mientras
+      A[j] ← temp
+    fin para
+    gap ← gap // 2
+  fin mientras
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+void shellSort(int arr[], int n) {
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            int temp = arr[i];
+            int j;
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 34, 54, 2, 3};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    shellSort(arr, n);
+    printf("Array ordenado: \n");
+    printArray(arr, n);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    while gap > 0:
+        for i in range(gap, n):
+            temp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > temp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = temp
+        gap //= 2
+
+# Ejemplo de uso
+arr = [12, 34, 54, 2, 3]
+shell_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+
+\subsection{Merge Sort}
+El algoritmo Merge Sort es un algoritmo de ordenamiento basado en el paradigma divide y vencerás. Divide repetidamente la lista en mitades más pequeñas hasta que cada sublista tiene un solo elemento y luego combina estas sublistas de forma ordenada para formar la lista completa.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n \log n)$.
+    \item \textbf{Peor caso:} $O(n \log n)$.
+    \item \textbf{Caso promedio:} $O(n \log n)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+MergeSort(A, inicio, fin)
+  si inicio < fin entonces
+    medio ← (inicio + fin) // 2
+    MergeSort(A, inicio, medio)
+    MergeSort(A, medio+1, fin)
+    Mezclar(A, inicio, medio, fin)
+  fin si
+
+Mezclar(A, inicio, medio, fin)
+  n1 ← medio - inicio + 1
+  n2 ← fin - medio
+  L ← subarray(A, inicio, medio)
+  R ← subarray(A, medio+1, fin)
+  i ← 0, j ← 0, k ← inicio
+  mientras i < n1 y j < n2 hacer
+    si L[i] <= R[j] entonces
+      A[k] ← L[i]
+      i ← i + 1
+    si no
+      A[k] ← R[j]
+      j ← j + 1
+    fin si
+    k ← k + 1
+  fin mientras
+  copiar elementos restantes de L y R en A
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+
+void merge(int arr[], int left, int mid, int right) {
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+
+    int L[n1], R[n2];
+    for (int i = 0; i < n1; i++)
+        L[i] = arr[left + i];
+    for (int j = 0; j < n2; j++)
+        R[j] = arr[mid + 1 + j];
+
+    int i = 0, j = 0, k = left;
+    while (i < n1 && j < n2) {
+        if (L[i] <= R[j]) {
+            arr[k] = L[i];
+            i++;
+        } else {
+            arr[k] = R[j];
+            j++;
+        }
+        k++;
+    }
+
+    while (i < n1) {
+        arr[k] = L[i];
+        i++;
+        k++;
+    }
+
+    while (j < n2) {
+        arr[k] = R[j];
+        j++;
+        k++;
+    }
+}
+
+void mergeSort(int arr[], int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        mergeSort(arr, left, mid);
+        mergeSort(arr, mid + 1, right);
+        merge(arr, left, mid, right);
+    }
+}
+
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    int arr_size = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original: \n");
+    printArray(arr, arr_size);
+
+    mergeSort(arr, 0, arr_size - 1);
+
+    printf("Array ordenado: \n");
+    printArray(arr, arr_size);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def merge_sort(arr):
+    if len(arr) > 1:
+        mid = len(arr) // 2
+        L = arr[:mid]
+        R = arr[mid:]
+
+        merge_sort(L)
+        merge_sort(R)
+
+        i = j = k = 0
+
+        while i < len(L) and j < len(R):
+            if L[i] <= R[j]:
+                arr[k] = L[i]
+                i += 1
+            else:
+                arr[k] = R[j]
+                j += 1
+            k += 1
+
+        while i < len(L):
+            arr[k] = L[i]
+            i += 1
+            k += 1
+
+        while j < len(R):
+            arr[k] = R[j]
+            j += 1
+            k += 1
+
+# Ejemplo de uso
+arr = [12, 11, 13, 5, 6, 7]
+print("Array original:", arr)
+merge_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+
+\subsection{Quick Sort}
+Quick Sort es un algoritmo de ordenamiento basado en el paradigma divide y vencerás. Selecciona un elemento como \textit{pivote} y particiona el array en dos subarrays: uno con elementos menores al pivote y otro con elementos mayores. Luego, aplica Quick Sort recursivamente a ambos subarrays.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n \log n)$ (cuando el pivote divide el array en partes iguales).
+    \item \textbf{Peor caso:} $O(n^2)$ (cuando el pivote es el elemento más grande o más pequeño).
+    \item \textbf{Caso promedio:} $O(n \log n)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+QuickSort(A, inicio, fin)
+  si inicio < fin entonces
+    pivote ← Particionar(A, inicio, fin)
+    QuickSort(A, inicio, pivote-1)
+    QuickSort(A, pivote+1, fin)
+  fin si
+
+Particionar(A, inicio, fin)
+  pivote ← A[fin]
+  i ← inicio - 1
+  para j ← inicio hasta fin-1 hacer
+    si A[j] <= pivote entonces
+      i ← i + 1
+      intercambiar A[i] y A[j]
+    fin si
+  fin para
+  intercambiar A[i+1] y A[fin]
+  retornar i+1
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+int partition(int arr[], int low, int high) {
+    int pivot = arr[high];
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        if (arr[j] <= pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        int pi = partition(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {10, 7, 8, 9, 1, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    quickSort(arr, 0, n - 1);
+    printf("Array ordenado: \n");
+    printArray(arr, n);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def partition(arr, low, high):
+    pivot = arr[high]
+    i = low - 1
+
+    for j in range(low, high):
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
+    arr[i + 1], arr[high] = arr[high], arr[i + 1]
+    return i + 1
+
+def quick_sort(arr, low, high):
+    if low < high:
+        pi = partition(arr, low, high)
+        quick_sort(arr, low, pi - 1)
+        quick_sort(arr, pi + 1, high)
+
+# Ejemplo de uso
+arr = [10, 7, 8, 9, 1, 5]
+quick_sort(arr, 0, len(arr) - 1)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+
+\subsection{Heap Sort}
+Heap Sort es un algoritmo de ordenamiento basado en una estructura de datos llamada \textit{heap} binario. Utiliza un \textit{max-heap} (para ordenar de manera ascendente) o un \textit{min-heap} (para ordenar de manera descendente) para construir un árbol binario completo en el que cada nodo padre es mayor (o menor) que sus hijos. Una vez construido el \textit{heap}, el elemento más grande (la raíz) se coloca en su posición correcta y se reorganiza el \textit{heap} para los elementos restantes.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n \log n)$.
+    \item \textbf{Peor caso:} $O(n \log n)$.
+    \item \textbf{Caso promedio:} $O(n \log n)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\begin{verbatim}
+HeapSort(A)
+  construirMaxHeap(A)
+  para i ← longitud(A)-1 hasta 1 hacer
+    intercambiar A[0] y A[i]
+    maxHeapify(A, 0, i)
+  fin para
+fin
+
+construirMaxHeap(A)
+  para i ← longitud(A)//2-1 hasta 0 hacer
+    maxHeapify(A, i, longitud(A))
+  fin para
+fin
+
+maxHeapify(A, i, n)
+  izquierda ← 2*i + 1
+  derecha ← 2*i + 2
+  mayor ← i
+  si izquierda < n y A[izquierda] > A[mayor] entonces
+    mayor ← izquierda
+  fin si
+  si derecha < n y A[derecha] > A[mayor] entonces
+    mayor ← derecha
+  fin si
+  si mayor != i entonces
+    intercambiar A[i] y A[mayor]
+    maxHeapify(A, mayor, n)
+  fin si
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+void swap(int* a, int* b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void heapify(int arr[], int n, int i) {
+    int largest = i;
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[largest])
+        largest = left;
+
+    if (right < n && arr[right] > arr[largest])
+        largest = right;
+
+    if (largest != i) {
+        swap(&arr[i], &arr[largest]);
+        heapify(arr, n, largest);
+    }
+}
+
+void heapSort(int arr[], int n) {
+    for (int i = n / 2 - 1; i >= 0; i--)
+        heapify(arr, n, i);
+
+    for (int i = n - 1; i >= 0; i--) {
+        swap(&arr[0], &arr[i]);
+        heapify(arr, i, 0);
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {12, 11, 13, 5, 6, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    heapSort(arr, n);
+
+    printf("Array ordenado: \n");
+    printArray(arr, n);
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def heapify(arr, n, i):
+    largest = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+
+    if left < n and arr[left] > arr[largest]:
+        largest = left
+
+    if right < n and arr[right] > arr[largest]:
+        largest = right
+
+    if largest != i:
+        arr[i], arr[largest] = arr[largest], arr[i]
+        heapify(arr, n, largest)
+
+def heap_sort(arr):
+    n = len(arr)
+
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(arr, n, i)
+
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(arr, i, 0)
+
+# Ejemplo de uso
+arr = [12, 11, 13, 5, 6, 7]
+heap_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsection{TimSort}
+TimSort es un algoritmo híbrido que combina \textit{Insertion Sort} y \textit{Merge Sort}. Divide el array en pequeñas corridas (\textit{runs}), las ordena con \textit{Insertion Sort} y luego combina estas corridas usando \textit{Merge Sort}. Está diseñado para ser eficiente en datos reales.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (cuando los datos ya están ordenados).
+    \item \textbf{Peor caso:} $O(n \log n)$.
+    \item \textbf{Caso promedio:} $O(n \log n)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras,mezclar}
+}
+\begin{verbatim}
+TimSort(A)
+  MIN_RUN ← calcularMinRun(longitud(A))
+  para cada subarray en A de tamanio MIN_RUN hacer
+    usarInsertionSort(subarray)
+  fin para
+  tamanio ← MIN_RUN
+  mientras tamanio < longitud(A) hacer
+    para cada par de subarrays de tamanio "tamanio" en A hacer
+      mezclar(subarray1, subarray2)
+    fin para
+    tamanio ← 2 * tamanio
+  fin mientras
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MIN_RUN 32
+
+void insertionSort(int arr[], int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+        int temp = arr[i];
+        int j = i - 1;
+        while (j >= left && arr[j] > temp) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = temp;
+    }
+}
+
+void merge(int arr[], int left, int mid, int right) {
+    int len1 = mid - left + 1, len2 = right - mid;
+    int *leftArr = (int *)malloc(len1 * sizeof(int));
+    int *rightArr = (int *)malloc(len2 * sizeof(int));
+
+    for (int i = 0; i < len1; i++)
+        leftArr[i] = arr[left + i];
+    for (int i = 0; i < len2; i++)
+        rightArr[i] = arr[mid + 1 + i];
+
+    int i = 0, j = 0, k = left;
+    while (i < len1 && j < len2) {
+        if (leftArr[i] <= rightArr[j])
+            arr[k++] = leftArr[i++];
+        else
+            arr[k++] = rightArr[j++];
+    }
+
+    while (i < len1)
+        arr[k++] = leftArr[i++];
+    while (j < len2)
+        arr[k++] = rightArr[j++];
+
+    free(leftArr);
+    free(rightArr);
+}
+
+void timSort(int arr[], int n) {
+    for (int i = 0; i < n; i += MIN_RUN) {
+        int end = (i + MIN_RUN - 1 < n) ? i + MIN_RUN - 1 : n - 1;
+        insertionSort(arr, i, end);
+    }
+
+    for (int size = MIN_RUN; size < n; size = 2 * size) {
+        for (int left = 0; left < n; left += 2 * size) {
+            int mid = (left + size - 1 < n) ? left + size - 1 : n - 1;
+            int right = (left + 2 * size - 1 < n) ? left + 2 * size - 1 : n - 1;
+
+            if (mid < right)
+                merge(arr, left, mid, right);
+        }
+    }
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {5, 21, 7, 23, 19, 4, 2, 8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    timSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+MIN_RUN = 32
+
+def insertion_sort(arr, left, right):
+    for i in range(left + 1, right + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= left and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+def merge(arr, left, mid, right):
+    left_part = arr[left:mid + 1]
+    right_part = arr[mid + 1:right + 1]
+
+    i = j = 0
+    k = left
+
+    while i < len(left_part) and j < len(right_part):
+        if left_part[i] <= right_part[j]:
+            arr[k] = left_part[i]
+            i += 1
+        else:
+            arr[k] = right_part[j]
+            j += 1
+        k += 1
+
+    while i < len(left_part):
+        arr[k] = left_part[i]
+        i += 1
+        k += 1
+
+    while j < len(right_part):
+        arr[k] = right_part[j]
+        j += 1
+        k += 1
+
+def tim_sort(arr):
+    n = len(arr)
+    for start in range(0, n, MIN_RUN):
+        end = min(start + MIN_RUN - 1, n - 1)
+        insertion_sort(arr, start, end)
+
+    size = MIN_RUN
+    while size < n:
+        for left in range(0, n, size * 2):
+            mid = min(n - 1, left + size - 1)
+            right = min((left + 2 * size - 1), n - 1)
+
+            if mid < right:
+                merge(arr, left, mid, right)
+
+        size *= 2
+
+# Ejemplo de uso
+arr = [5, 21, 7, 23, 19, 4, 2, 8]
+tim_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsection{Tree Sort}Tree Sort es un algoritmo de ordenamiento basado en un árbol binario de búsqueda (BST). Consiste en insertar todos los elementos en un árbol binario y luego realizar un recorrido \textit{in-order} del árbol para recuperar los elementos en orden ascendente.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n \log n)$ (cuando el árbol está equilibrado).
+    \item \textbf{Peor caso:} $O(n^2)$ (cuando el árbol es completamente desbalanceado, como una lista enlazada).
+    \item \textbf{Caso promedio:} $O(n \log n)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+TreeSort(A)
+  Crear un arbol binario vacio
+  para cada elemento en A hacer
+    Insertar el elemento en el arbol
+  fin para
+  Realizar un recorrido in-order del arbol
+  Guardar los elementos en A
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+
+// Definicion del nodo del arbol binario
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+// Crear un nuevo nodo
+struct Node* newNode(int data) {
+    struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+    node->data = data;
+    node->left = node->right = NULL;
+    return node;
+}
+
+// Insertar un nodo en el arbol
+struct Node* insert(struct Node* node, int data) {
+    if (node == NULL)
+        return newNode(data);
+    if (data < node->data)
+        node->left = insert(node->left, data);
+    else if (data > node->data)
+        node->right = insert(node->right, data);
+    return node;
+}
+
+// Recorrido in-order del arbol
+void inorder(struct Node* root, int arr[], int* index) {
+    if (root != NULL) {
+        inorder(root->left, arr, index);
+        arr[(*index)++] = root->data;
+        inorder(root->right, arr, index);
+    }
+}
+
+// Tree Sort
+void treeSort(int arr[], int n) {
+    struct Node* root = NULL;
+
+    // Insertar elementos en el arbol
+    for (int i = 0; i < n; i++) {
+        root = insert(root, arr[i]);
+    }
+
+    // Recorrido in-order para ordenar
+    int index = 0;
+    inorder(root, arr, &index);
+}
+
+// Imprimir un array
+void printArray(int arr[], int size) {
+    for (int i = 0; i < size; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {5, 3, 7, 1, 9, 4, 6};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    treeSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+
+# Insertar un nodo en el arbol
+def insert(root, key):
+    if root is None:
+        return Node(key)
+    if key < root.key:
+        root.left = insert(root.left, key)
+    elif key > root.key:
+        root.right = insert(root.right, key)
+    return root
+
+# Recorrido in-order del arbol
+def inorder(root, sorted_list):
+    if root is not None:
+        inorder(root.left, sorted_list)
+        sorted_list.append(root.key)
+        inorder(root.right, sorted_list)
+
+# Tree Sort
+def tree_sort(arr):
+    if not arr:
+        return []
+
+    root = None
+    for key in arr:
+        root = insert(root, key)
+
+    sorted_list = []
+    inorder(root, sorted_list)
+    return sorted_list
+
+# Ejemplo de uso
+arr = [5, 3, 7, 1, 9, 4, 6]
+print("Array original:", arr)
+sorted_arr = tree_sort(arr)
+print("Array ordenado:", sorted_arr)
+\end{lstlisting}
+
+\section{Ordenamiento no comparativo}
+\subsection{Counting Sort}
+\subsection{Radix Sort}
+\subsection{Bucket Sort}
+
+\section{Ordenamiento adaptativo}
+\subsection{TimSort}
+
+\section{Algoritmos notables}
+\subsection{Pancake Sort}
+\subsection{Gnome Sort}
+\subsection{Cocktail Shaker Sort}
+\subsection{Comb Sort}
+\subsection{Bogo Sort}
+\printnotes*
+
+
+\chapter{Continuing on}
+
+Ex blandit voluptatum sit. Cu duo aeque tractatos, solet expetenda voluptaria pri te. Mutat movet dicit vel ne, an est graeci percipitur, an sumo eloquentiam sea. Eos gloriatur maiestatis no, aliquip copiosae vulputate et usu.\pagenote{Ut pro solum explicari, nam copiosae vivendum te, an sed senserit electram ullamcorper.} Mucius repudiare ne mei.
+
+Sit ei option sapientem laboramus, quo eu reque ancillae repudiare. Quo impedit deserunt sapientem an. Recusabo deseruisse ei eam, vis ignota pericula at. Mea erat erroribus persequeris id. Ea alterum lucilius abhorreant mel, sed animal impedit docendi ne.
+
+\printnotes*
+
+\end{document}
