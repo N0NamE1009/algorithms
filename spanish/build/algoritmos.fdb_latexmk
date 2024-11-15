@@ -1,6 +1,6 @@
 # Fdb version 4
-["pdflatex"] 1731644061.22943 "/Users/luisdbg/Documents/github/algoritmos/algorithms/spanish/algoritmos.tex" "build/algoritmos.pdf" "algoritmos" 1731644062.97266 0
-  "/Users/luisdbg/Documents/github/algoritmos/algorithms/spanish/algoritmos.tex" 1731644058.99375 29160 4e27232170b4715e7fa3df5b41a336ca ""
+["pdflatex"] 1731645158.00569 "/Users/luisdbg/Documents/github/algoritmos/algorithms/spanish/algoritmos.tex" "build/algoritmos.pdf" "algoritmos" 1731645159.74744 0
+  "/Users/luisdbg/Documents/github/algoritmos/algorithms/spanish/algoritmos.tex" 1731645157.5253 29069 ade73fb9e80b5efc2d0b03994926d28a ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc" 1136849721 2971 def0b6c1f0b107b3b936def894055589 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1136849721 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
@@ -108,10 +108,10 @@
   "/usr/local/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1730668993.53515 5467645 128b85b7cde5f5edc5cb7f1dd7ff8736 ""
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1730668987 8221421 657bf4d844660f40009439a5c6aae073 ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
-  "algoritmos.tex" 1731644058.99375 29160 4e27232170b4715e7fa3df5b41a336ca ""
-  "build/algoritmos.aux" 1731644062.811 8024 55a606f1ad7cebad0440becc90078d64 "pdflatex"
-  "build/algoritmos.ent" 1731644062.80939 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "build/algoritmos.out" 1731644062.81341 3905 ba837423279086e92590ea811b400a20 "pdflatex"
+  "algoritmos.tex" 1731645157.5253 29069 ade73fb9e80b5efc2d0b03994926d28a ""
+  "build/algoritmos.aux" 1731645159.57886 7634 9c74234b5784298105130afa8c2663f6 "pdflatex"
+  "build/algoritmos.ent" 1731645159.57764 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "build/algoritmos.out" 1731645159.58116 3476 6622eef416717fa8dcd74ca05f01f466 "pdflatex"
   (generated)
   "build/algoritmos.aux"
   "build/algoritmos.ent"
