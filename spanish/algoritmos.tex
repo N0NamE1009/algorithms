@@ -1127,8 +1127,420 @@ print("Array ordenado:", sorted_arr)
 
 \section{Ordenamiento no comparativo}
 \subsection{Counting Sort}
+Counting Sort es un algoritmo de ordenamiento no comparativo que se basa en contar el número de ocurrencias de cada valor. Es adecuado para ordenar arrays de enteros en un rango definido. Los elementos se cuentan, y estas cuentas se utilizan para colocar los elementos en su posición correcta en el array ordenado.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n + k)$, donde $k$ es el rango de valores.
+    \item \textbf{Peor caso:} $O(n + k)$.
+    \item \textbf{Caso promedio:} $O(n + k)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+CountingSort(A, rango)
+  Crear un array de conteo C de tamaño rango y llenarlo con ceros
+  Crear un array de salida B del mismo tamaño que A
+  para cada elemento x en A hacer
+    Incrementar C[x]
+  fin para
+  para i ← 1 hasta rango-1 hacer
+    C[i] ← C[i] + C[i-1]
+  fin para
+  para cada elemento x en A, en orden inverso, hacer
+    B[C[x]-1] ← x
+    C[x] ← C[x] - 1
+  fin para
+  Copiar elementos de B a A
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void countingSort(int arr[], int n, int range) {
+    int* count = (int*)calloc(range, sizeof(int));
+    int* output = (int*)malloc(n * sizeof(int));
+
+    // Contar las ocurrencias
+    for (int i = 0; i < n; i++) {
+        count[arr[i]]++;
+    }
+
+    // Acumular las posiciones
+    for (int i = 1; i < range; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Construir el array ordenado
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[arr[i]] - 1] = arr[i];
+        count[arr[i]]--;
+    }
+
+    // Copiar el array ordenado al original
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+
+    free(count);
+    free(output);
+}
+
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {4, 2, 2, 8, 3, 3, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+    int range = 9; // Rango de los valores (0 a 8)
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    countingSort(arr, n, range);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def counting_sort(arr, max_val):
+    n = len(arr)
+    count = [0] * (max_val + 1)
+    output = [0] * n
+
+    # Contar las ocurrencias
+    for num in arr:
+        count[num] += 1
+
+    # Acumular las posiciones
+    for i in range(1, len(count)):
+        count[i] += count[i - 1]
+
+    # Construir el array ordenado
+    for num in reversed(arr):
+        output[count[num] - 1] = num
+        count[num] -= 1
+
+    return output
+
+# Ejemplo de uso
+arr = [4, 2, 2, 8, 3, 3, 1]
+print("Array original:", arr)
+sorted_arr = counting_sort(arr, max(arr))
+print("Array ordenado:", sorted_arr)
+\end{lstlisting}
+
+
 \subsection{Radix Sort}
+Radix Sort es un algoritmo de ordenamiento no comparativo que ordena los números agrupándolos por dígitos significativos (de menor a mayor o viceversa). Generalmente, utiliza Counting Sort como subrutina para clasificar los dígitos en cada posición.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(nk)$, donde $n$ es el número de elementos y $k$ es el número de dígitos.
+    \item \textbf{Peor caso:} $O(nk)$.
+    \item \textbf{Caso promedio:} $O(nk)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+RadixSort(A, d)
+  para i ← 0 hasta d-1 hacer
+    UsarCountingSort(A, dígito i)
+  fin para
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+
+// Obtener el digito mas significativo en la posicion exp
+int getMax(int arr[], int n) {
+    int max = arr[0];
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+// Counting Sort modificado para Radix Sort
+void countingSort(int arr[], int n, int exp) {
+    int* output = (int*)malloc(n * sizeof(int));
+    int count[10] = {0};
+
+    // Contar ocurrencias de digitos
+    for (int i = 0; i < n; i++) {
+        count[(arr[i] / exp) % 10]++;
+    }
+
+    // Acumular posiciones
+    for (int i = 1; i < 10; i++) {
+        count[i] += count[i - 1];
+    }
+
+    // Construir el array ordenado
+    for (int i = n - 1; i >= 0; i--) {
+        output[count[(arr[i] / exp) % 10] - 1] = arr[i];
+        count[(arr[i] / exp) % 10]--;
+    }
+
+    // Copiar el array ordenado al original
+    for (int i = 0; i < n; i++) {
+        arr[i] = output[i];
+    }
+
+    free(output);
+}
+
+// Radix Sort
+void radixSort(int arr[], int n) {
+    int max = getMax(arr, n);
+
+    // Ordenar para cada digito
+    for (int exp = 1; max / exp > 0; exp *= 10) {
+        countingSort(arr, n, exp);
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {170, 45, 75, 90, 802, 24, 2, 66};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    radixSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def counting_sort(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+
+    # Contar ocurrencias de digitos
+    for num in arr:
+        index = (num // exp) % 10
+        count[index] += 1
+
+    # Acumular posiciones
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+
+    # Construir el array ordenado
+    for num in reversed(arr):
+        index = (num // exp) % 10
+        output[count[index] - 1] = num
+        count[index] -= 1
+
+    return output
+
+def radix_sort(arr):
+    if not arr:
+        return []
+
+    max_val = max(arr)
+    exp = 1
+    while max_val // exp > 0:
+        arr = counting_sort(arr, exp)
+        exp *= 10
+
+    return arr
+
+# Ejemplo de uso
+arr = [170, 45, 75, 90, 802, 24, 2, 66]
+print("Array original:", arr)
+sorted_arr = radix_sort(arr)
+print("Array ordenado:", sorted_arr)
+\end{lstlisting}
+
+
 \subsection{Bucket Sort}
+Bucket Sort es un algoritmo de ordenamiento no comparativo que distribuye los elementos en varias "cubetas" (\textit{buckets}). Cada cubeta se ordena de manera individual, generalmente usando un algoritmo como \textit{Insertion Sort}. Finalmente, las cubetas se concatenan para formar el array ordenado.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n + k)$, donde $n$ es el número de elementos y $k$ es el número de cubetas.
+    \item \textbf{Peor caso:} $O(n^2)$ (cuando todos los elementos caen en una sola cubeta y deben ser ordenados).
+    \item \textbf{Caso promedio:} $O(n + k)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{lstlisting}
+BucketSort(A, k)
+  Crear k cubetas vacias
+  para cada elemento x en A hacer
+    Calcular la cubeta correspondiente para x
+    Agregar x a la cubeta
+  fin para
+  para cada cubeta B hacer
+    Ordenar la cubeta B
+  fin para
+  Concatenar las cubetas en el array A
+fin
+\end{lstlisting}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+
+// Funcion para ordenar una cubeta usando Insertion Sort
+void insertionSort(float arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        float key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+// Bucket Sort
+void bucketSort(float arr[], int n) {
+    // Crear cubetas
+    int numBuckets = 10;
+    float* buckets[numBuckets];
+    int bucketSizes[numBuckets];
+
+    for (int i = 0; i < numBuckets; i++) {
+        buckets[i] = (float*)malloc(n * sizeof(float));
+        bucketSizes[i] = 0;
+    }
+
+    // Distribuir elementos en cubetas
+    for (int i = 0; i < n; i++) {
+        int bucketIndex = (int)(arr[i] * numBuckets);
+        buckets[bucketIndex][bucketSizes[bucketIndex]++] = arr[i];
+    }
+
+    // Ordenar cubetas y concatenar resultados
+    int index = 0;
+    for (int i = 0; i < numBuckets; i++) {
+        insertionSort(buckets[i], bucketSizes[i]);
+        for (int j = 0; j < bucketSizes[i]; j++) {
+            arr[index++] = buckets[i][j];
+        }
+        free(buckets[i]);
+    }
+}
+
+// Imprimir un array
+void printArray(float arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%.2f ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    float arr[] = {0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21, 0.12, 0.23, 0.68};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    bucketSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def bucket_sort(arr):
+    n = len(arr)
+    if n <= 0:
+        return arr
+
+    # Crear cubetas vacias
+    num_buckets = 10
+    buckets = [[] for _ in range(num_buckets)]
+
+    # Distribuir elementos en cubetas
+    for num in arr:
+        index = int(num * num_buckets)
+        buckets[index].append(num)
+
+    # Ordenar cada cubeta y concatenar resultados
+    sorted_arr = []
+    for bucket in buckets:
+        sorted_arr.extend(sorted(bucket))
+
+    return sorted_arr
+
+# Ejemplo de uso
+arr = [0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21, 0.12, 0.23, 0.68]
+print("Array original:", arr)
+sorted_arr = bucket_sort(arr)
+print("Array ordenado:", sorted_arr)
+\end{lstlisting}
 
 \section{Ordenamiento adaptativo}
 \subsection{TimSort}
