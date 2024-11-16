@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.3)  15 NOV 2024 18:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.11.3)  15 NOV 2024 19:11
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -469,24 +469,85 @@ LaTeX Info: Redefining \% on input line 1484.
  [33]
 LaTeX Info: Redefining \. on input line 1529.
 LaTeX Info: Redefining \% on input line 1529.
- [34] (build/algoritmos.ent)
+ [34]
+LaTeX Info: Redefining \. on input line 1585.
+LaTeX Info: Redefining \% on input line 1585.
+ [35]
+LaTeX Info: Redefining \. on input line 1617.
+LaTeX Info: Redefining \% on input line 1617.
+ [36]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1659.
+LaTeX Info: Redefining \% on input line 1659.
+ [37]
+LaTeX Info: Redefining \. on input line 1705.
+LaTeX Info: Redefining \% on input line 1705.
+ [38]
+LaTeX Info: Redefining \. on input line 1751.
+LaTeX Info: Redefining \% on input line 1751.
+ [39]
+LaTeX Info: Redefining \. on input line 1796.
+LaTeX Info: Redefining \% on input line 1796.
+ [40]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1841.
+LaTeX Info: Redefining \% on input line 1841.
+ [41]
+LaTeX Info: Redefining \. on input line 1888.
+LaTeX Info: Redefining \% on input line 1888.
+ [42]
+LaTeX Info: Redefining \. on input line 1932.
+LaTeX Info: Redefining \% on input line 1932.
+ [43]
+LaTeX Info: Redefining \. on input line 1977.
+LaTeX Info: Redefining \% on input line 1977.
+ [44]
+LaTeX Info: Redefining \. on input line 2036.
+LaTeX Info: Redefining \% on input line 2036.
+ [45]
+LaTeX Info: Redefining \. on input line 2067.
+LaTeX Info: Redefining \% on input line 2067.
+ [46]
+LaTeX Info: Redefining \. on input line 2113.
+LaTeX Info: Redefining \% on input line 2113.
+ [47]
+LaTeX Info: Redefining \. on input line 2152.
+LaTeX Info: Redefining \% on input line 2152.
+ [48]
+LaTeX Info: Redefining \. on input line 2202.
+LaTeX Info: Redefining \% on input line 2202.
+ [49]
+LaTeX Info: Redefining \. on input line 2248.
+LaTeX Info: Redefining \% on input line 2248.
+ [50]
+LaTeX Info: Redefining \. on input line 2301.
+LaTeX Info: Redefining \% on input line 2301.
+ [51]
+LaTeX Info: Redefining \. on input line 2331.
+LaTeX Info: Redefining \% on input line 2331.
+ [52]
+LaTeX Info: Redefining \. on input line 2376.
+LaTeX Info: Redefining \% on input line 2376.
+ [53] (build/algoritmos.ent)
 \openout3 = `algoritmos.ent'.
 
-LaTeX Info: Redefining \. on input line 1557.
-LaTeX Info: Redefining \% on input line 1557.
- [35]
+LaTeX Info: Redefining \. on input line 2394.
+LaTeX Info: Redefining \% on input line 2394.
+ [54]
 Cap\'{\i }tulo 2.
 (build/algoritmos.ent)
 \openout3 = `algoritmos.ent'.
 
- [36
+ [55
 
 ]
 Cap\'{\i }tulo 3.
 (build/algoritmos.ent)
 \openout3 = `algoritmos.ent'.
 
- [37
+ [56
 
 ] (build/algoritmos.aux
 LaTeX Info: Redefining \. on input line 11.
@@ -497,21 +558,21 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-02-20>
  ***********
 Package rerunfilecheck Info: File `algoritmos.out' has not changed.
-(rerunfilecheck)             Checksum: 6622EEF416717FA8DCD74CA05F01F466;3476.
+(rerunfilecheck)             Checksum: 392FE1A855B59AB505217FED3387D0B2;3743.
  ) 
 Here is how much of TeX's memory you used:
- 14218 strings out of 474116
- 214310 string characters out of 5743682
+ 14870 strings out of 474116
+ 224141 string characters out of 5743682
  2276187 words of memory out of 5000000
- 35302 multiletter control sequences out of 15000+600000
+ 35364 multiletter control sequences out of 15000+600000
  572864 words of font info for 66 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,6n,79p,601b,2028s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1095.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1200.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx2074.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfbx2488.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0600.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfsl1095.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfti1095.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sftt1095.pfb>
-Output written on build/algoritmos.pdf (37 pages, 384199 bytes).
+Output written on build/algoritmos.pdf (56 pages, 445576 bytes).
 PDF statistics:
- 1645 PDF objects out of 1728 (max. 8388607)
- 1561 compressed objects within 16 object streams
- 1125 named destinations out of 1200 (max. 500000)
- 201 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 2427 PDF objects out of 2487 (max. 8388607)
+ 2316 compressed objects within 24 object streams
+ 1715 named destinations out of 1728 (max. 500000)
+ 217 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -1407,7 +1407,7 @@ print("Array ordenado:", sorted_arr)
 
 
 \subsection{Bucket Sort}
-Bucket Sort es un algoritmo de ordenamiento no comparativo que distribuye los elementos en varias "cubetas" (\textit{buckets}). Cada cubeta se ordena de manera individual, generalmente usando un algoritmo como \textit{Insertion Sort}. Finalmente, las cubetas se concatenan para formar el array ordenado.
+Bucket Sort es un algoritmo de ordenamiento no comparativo que distribuye los elementos en varias cubetas (\textit{buckets}). Cada cubeta se ordena de manera individual, generalmente usando un algoritmo como \textit{Insertion Sort}. Finalmente, las cubetas se concatenan para formar el array ordenado.
 
 \subsubsection{Análisis de Complejidad}
 \begin{itemize}
@@ -1544,13 +1544,850 @@ print("Array ordenado:", sorted_arr)
 
 \section{Ordenamiento adaptativo}
 \subsection{TimSort}
+TimSort es un algoritmo híbrido que combina \textit{Insertion Sort} y \textit{Merge Sort}. Aprovecha segmentos ya ordenados (\textit{runs}) dentro del array para reducir el trabajo adicional. Esto lo hace adaptativo, ya que su rendimiento mejora si los datos están parcialmente ordenados.
+
+\subsubsection{Características Adaptativas}
+\begin{itemize}
+    \item Identifica automáticamente los segmentos ya ordenados (\textit{runs}).
+    \item Ordena los \textit{runs} pequeños usando \textit{Insertion Sort}.
+    \item Fusiona (\textit{merge}) los \textit{runs} ordenados eficientemente para formar el resultado final.
+\end{itemize}
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (cuando los datos están completamente ordenados o casi ordenados).
+    \item \textbf{Peor caso:} $O(n \log n)$ (cuando no hay ordenación preexistente).
+    \item \textbf{Caso promedio:} $O(n \log n)$.
+\end{itemize}
+
+\subsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+TimSort(A)
+  MIN_RUN ← calcularMinRun(longitud(A))
+  para cada subarray en A de tamaño MIN_RUN hacer
+    usarInsertionSort(subarray)
+  fin para
+  tamaño ← MIN_RUN
+  mientras tamaño < longitud(A) hacer
+    para cada par de subarrays de tamaño "tamaño" en A hacer
+      mezclar(subarray1, subarray2)
+    fin para
+    tamaño ← 2 * tamaño
+  fin mientras
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MIN_RUN 32
+
+// Insertion Sort para runs pequenios
+void insertionSort(int arr[], int left, int right) {
+    for (int i = left + 1; i <= right; i++) {
+        int temp = arr[i];
+        int j = i - 1;
+        while (j >= left && arr[j] > temp) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = temp;
+    }
+}
+
+// Mezclar dos subarrays
+void merge(int arr[], int left, int mid, int right) {
+    int len1 = mid - left + 1, len2 = right - mid;
+    int *leftArr = (int *)malloc(len1 * sizeof(int));
+    int *rightArr = (int *)malloc(len2 * sizeof(int));
+
+    for (int i = 0; i < len1; i++)
+        leftArr[i] = arr[left + i];
+    for (int i = 0; i < len2; i++)
+        rightArr[i] = arr[mid + 1 + i];
+
+    int i = 0, j = 0, k = left;
+    while (i < len1 && j < len2) {
+        if (leftArr[i] <= rightArr[j]) {
+            arr[k++] = leftArr[i++];
+        } else {
+            arr[k++] = rightArr[j++];
+        }
+    }
+
+    while (i < len1)
+        arr[k++] = leftArr[i++];
+    while (j < len2)
+        arr[k++] = rightArr[j++];
+
+    free(leftArr);
+    free(rightArr);
+}
+
+// TimSort principal
+void timSort(int arr[], int n) {
+    for (int i = 0; i < n; i += MIN_RUN) {
+        int end = (i + MIN_RUN - 1 < n) ? i + MIN_RUN - 1 : n - 1;
+        insertionSort(arr, i, end);
+    }
+
+    for (int size = MIN_RUN; size < n; size = 2 * size) {
+        for (int left = 0; left < n; left += 2 * size) {
+            int mid = (left + size - 1 < n) ? left + size - 1 : n - 1;
+            int right = (left + 2 * size - 1 < n) ? left + 2 * size - 1 : n - 1;
+
+            if (mid < right)
+                merge(arr, left, mid, right);
+        }
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++)
+        printf("%d ", arr[i]);
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {5, 21, 7, 23, 19, 4, 2, 8};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    timSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+MIN_RUN = 32
+
+def insertion_sort(arr, left, right):
+    for i in range(left + 1, right + 1):
+        key = arr[i]
+        j = i - 1
+        while j >= left and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+
+def merge(arr, left, mid, right):
+    left_part = arr[left:mid + 1]
+    right_part = arr[mid + 1:right + 1]
+
+    i = j = 0
+    k = left
+
+    while i < len(left_part) and j < len(right_part):
+        if left_part[i] <= right_part[j]:
+            arr[k] = left_part[i]
+            i += 1
+        else:
+            arr[k] = right_part[j]
+            j += 1
+        k += 1
+
+    while i < len(left_part):
+        arr[k] = left_part[i]
+        i += 1
+        k += 1
+
+    while j < len(right_part):
+        arr[k] = right_part[j]
+        j += 1
+        k += 1
+
+def tim_sort(arr):
+    n = len(arr)
+    for start in range(0, n, MIN_RUN):
+        end = min(start + MIN_RUN - 1, n - 1)
+        insertion_sort(arr, start, end)
+
+    size = MIN_RUN
+    while size < n:
+        for left in range(0, n, size * 2):
+            mid = min(n - 1, left + size - 1)
+            right = min((left + 2 * size - 1), n - 1)
+
+            if mid < right:
+                merge(arr, left, mid, right)
+
+        size *= 2
+
+# Ejemplo de uso
+arr = [5, 21, 7, 23, 19, 4, 2, 8]
+tim_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsubsection{Conclusión}
+TimSort es un algoritmo adaptativo eficiente diseñado para aprovechar la estructura preexistente en los datos. Es ampliamente utilizado en Python y Java debido a su rendimiento superior en datos reales.
+
+
 
 \section{Algoritmos notables}
 \subsection{Pancake Sort}
+El algoritmo Pancake Sort simula la ordenación de una pila de panqueques usando una espátula. Permite "voltear" los elementos desde la parte superior hasta una posición deseada. El objetivo es colocar el elemento más grande en la posición final, reduciendo el rango de ordenación en cada iteración.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Peor caso:} $O(n^2)$.
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+PancakeSort(A)
+  para i ← longitud(A) hasta 2 hacer
+    maxIndex ← encontrarÍndiceDelMáximo(A, 1, i)
+    si maxIndex != i entonces
+      voltear(A, maxIndex)
+      voltear(A, i)
+    fin si
+  fin para
+fin
+
+voltear(A, k)
+  invertir los primeros k elementos de A
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+// Voltear los primeros k elementos del array
+void flip(int arr[], int k) {
+    int start = 0;
+    while (start < k) {
+        int temp = arr[start];
+        arr[start] = arr[k];
+        arr[k] = temp;
+        start++;
+        k--;
+    }
+}
+
+// Encontrar el indice del elemento maximo en un rango
+int findMaxIndex(int arr[], int n) {
+    int maxIndex = 0;
+    for (int i = 1; i < n; i++) {
+        if (arr[i] > arr[maxIndex]) {
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
+}
+
+// Pancake Sort
+void pancakeSort(int arr[], int n) {
+    for (int size = n; size > 1; size--) {
+        int maxIndex = findMaxIndex(arr, size);
+
+        if (maxIndex != size - 1) {
+            // Llevar el maximo a la parte superior
+            flip(arr, maxIndex);
+
+            // Llevar el maximo a su posicion final
+            flip(arr, size - 1);
+        }
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {3, 6, 2, 7, 4, 5};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    pancakeSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def flip(arr, k):
+    start = 0
+    while start < k:
+        arr[start], arr[k] = arr[k], arr[start]
+        start += 1
+        k -= 1
+
+def find_max_index(arr, n):
+    max_index = 0
+    for i in range(1, n):
+        if arr[i] > arr[max_index]:
+            max_index = i
+    return max_index
+
+def pancake_sort(arr):
+    n = len(arr)
+    for size in range(n, 1, -1):
+        max_index = find_max_index(arr, size)
+
+        if max_index != size - 1:
+            # Llevar el maximo a la parte superior
+            flip(arr, max_index)
+
+            # Llevar el maximo a su posicion final
+            flip(arr, size - 1)
+
+# Ejemplo de uso
+arr = [3, 6, 2, 7, 4, 5]
+print("Array original:", arr)
+pancake_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsubsection{Conclusión}
+Pancake Sort es un algoritmo interesante por su enfoque único basado en volteos. Aunque no es práctico para la mayoría de las aplicaciones debido a su complejidad $O(n^2)$, tiene un valor educativo y es útil en problemas específicos.
+
+
 \subsection{Gnome Sort}
+El algoritmo Gnome Sort es un algoritmo simple de ordenamiento basado en el principio de "volver atrás" cuando se encuentra un elemento fuera de orden. Es similar a \textit{Insertion Sort}, pero en lugar de insertar directamente, realiza intercambios repetidos hasta que el orden sea correcto.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (cuando los datos están casi ordenados).
+    \item \textbf{Peor caso:} $O(n^2)$.
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+GnomeSort(A)
+  i ← 0
+  mientras i < longitud(A) hacer
+    si i = 0 o A[i-1] <= A[i] entonces
+      i ← i + 1
+    si no
+      intercambiar A[i] y A[i-1]
+      i ← i - 1
+    fin si
+  fin mientras
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+// Gnome Sort
+void gnomeSort(int arr[], int n) {
+    int i = 0;
+    while (i < n) {
+        if (i == 0 || arr[i - 1] <= arr[i]) {
+            i++;
+        } else {
+            int temp = arr[i];
+            arr[i] = arr[i - 1];
+            arr[i - 1] = temp;
+            i--;
+        }
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {34, 2, 10, -9, 7};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    gnomeSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def gnome_sort(arr):
+    i = 0
+    while i < len(arr):
+        if i == 0 or arr[i - 1] <= arr[i]:
+            i += 1
+        else:
+            arr[i], arr[i - 1] = arr[i - 1], arr[i]
+            i -= 1
+
+# Ejemplo de uso
+arr = [34, 2, 10, -9, 7]
+print("Array original:", arr)
+gnome_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsubsection{Conclusión}
+Gnome Sort es un algoritmo simple pero ineficiente para la mayoría de los casos. Es más útil como ejemplo educativo para entender los principios básicos de ordenamiento.
+
+
+
 \subsection{Cocktail Shaker Sort}
+
+El algoritmo Cocktail Shaker Sort es una variación del Bubble Sort que ordena en ambas direcciones en cada pasada. Esto permite que los elementos más pequeños y más grandes se muevan simultáneamente hacia sus posiciones correctas, mejorando el rendimiento en comparación con Bubble Sort en algunos casos.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (cuando los datos ya están ordenados).
+    \item \textbf{Peor caso:} $O(n^2)$.
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+CocktailShakerSort(A)
+  inicio ← 0
+  fin ← longitud(A) - 1
+  cambiado ← verdadero
+  mientras cambiado = verdadero hacer
+    cambiado ← falso
+    para i ← inicio hasta fin-1 hacer
+      si A[i] > A[i+1] entonces
+        intercambiar A[i] y A[i+1]
+        cambiado ← verdadero
+      fin si
+    fin para
+    si cambiado = falso entonces
+      romper
+    fin si
+    fin ← fin - 1
+    para i ← fin-1 hasta inicio hacer
+      si A[i] > A[i+1] entonces
+        intercambiar A[i] y A[i+1]
+        cambiado ← verdadero
+      fin si
+    fin para
+    inicio ← inicio + 1
+  fin mientras
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+// Cocktail Shaker Sort
+void cocktailShakerSort(int arr[], int n) {
+    int start = 0, end = n - 1;
+    int swapped = 1;
+
+    while (swapped) {
+        swapped = 0;
+
+        // Pasada de izquierda a derecha
+        for (int i = start; i < end; i++) {
+            if (arr[i] > arr[i + 1]) {
+                int temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                swapped = 1;
+            }
+        }
+
+        if (!swapped) break;
+
+        swapped = 0;
+        end--;
+
+        // Pasada de derecha a izquierda
+        for (int i = end - 1; i >= start; i--) {
+            if (arr[i] > arr[i + 1]) {
+                int temp = arr[i];
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                swapped = 1;
+            }
+        }
+
+        start++;
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {5, 3, 8, 6, 2, 7, 4, 1};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    cocktailShakerSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def cocktail_shaker_sort(arr):
+    start = 0
+    end = len(arr) - 1
+    swapped = True
+
+    while swapped:
+        swapped = False
+
+        # Pasada de izquierda a derecha
+        for i in range(start, end):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+
+        if not swapped:
+            break
+
+        swapped = False
+        end -= 1
+
+        # Pasada de derecha a izquierda
+        for i in range(end - 1, start - 1, -1):
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                swapped = True
+
+        start += 1
+
+# Ejemplo de uso
+arr = [5, 3, 8, 6, 2, 7, 4, 1]
+print("Array original:", arr)
+cocktail_shaker_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsubsection{Conclusión}
+Cocktail Shaker Sort mejora el rendimiento de Bubble Sort al ordenar en ambas direcciones. Sin embargo, sigue siendo ineficiente en grandes conjuntos de datos debido a su complejidad cuadrática.
+
 \subsection{Comb Sort}
+Comb Sort es una mejora del Bubble Sort que reduce significativamente los intercambios necesarios al comparar elementos distantes. Esto se logra utilizando un \textit{gap} (brecha) inicial grande, que se reduce en cada iteración según un factor de reducción (\textit{shrink factor}), generalmente 1.3.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n \log n)$.
+    \item \textbf{Peor caso:} $O(n^2)$.
+    \item \textbf{Caso promedio:} $O(n^2)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+CombSort(A)
+  n ← longitud(A)
+  gap ← n
+  shrink ← 1.3
+  cambiado ← verdadero
+  mientras gap > 1 o cambiado = verdadero hacer
+    gap ← máximo(1, entero(gap / shrink))
+    cambiado ← falso
+    para i ← 0 hasta n-gap-1 hacer
+      si A[i] > A[i+gap] entonces
+        intercambiar A[i] y A[i+gap]
+        cambiado ← verdadero
+      fin si
+    fin para
+  fin mientras
+fin
+\end{verbatim}
+
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+
+// Comb Sort
+void combSort(int arr[], int n) {
+    int gap = n;
+    const float shrink = 1.3;
+    int swapped = 1;
+
+    while (gap > 1 || swapped) {
+        gap = (int)(gap / shrink);
+        if (gap < 1) gap = 1;
+
+        swapped = 0;
+
+        for (int i = 0; i + gap < n; i++) {
+            if (arr[i] > arr[i + gap]) {
+                int temp = arr[i];
+                arr[i] = arr[i + gap];
+                arr[i + gap] = temp;
+                swapped = 1;
+            }
+        }
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int arr[] = {8, 4, 1, 56, 3, -44, 23, -6, 28, 0};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    combSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+def comb_sort(arr):
+    n = len(arr)
+    gap = n
+    shrink = 1.3
+    swapped = True
+
+    while gap > 1 or swapped:
+        gap = int(gap / shrink)
+        if gap < 1:
+            gap = 1
+
+        swapped = False
+
+        for i in range(n - gap):
+            if arr[i] > arr[i + gap]:
+                arr[i], arr[i + gap] = arr[i + gap], arr[i]
+                swapped = True
+
+# Ejemplo de uso
+arr = [8, 4, 1, 56, 3, -44, 23, -6, 28, 0]
+print("Array original:", arr)
+comb_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsubsection{Conclusión}
+Comb Sort es un algoritmo eficiente para datos pequeños a medianos y mejora significativamente el rendimiento en comparación con Bubble Sort. Sin embargo, sigue siendo menos eficiente que algoritmos avanzados como Quick Sort o Merge Sort.
+
+
 \subsection{Bogo Sort}
+Bogo Sort, también conocido como Stupid Sort, es un algoritmo de ordenamiento extremadamente ineficiente. Genera permutaciones aleatorias del array hasta que encuentra una que esté ordenada. Debido a su naturaleza aleatoria, no es práctico para ningún caso de uso real, pero tiene valor educativo y humorístico.
+
+\subsubsection{Análisis de Complejidad}
+\begin{itemize}
+    \item \textbf{Mejor caso:} $O(n)$ (si el array ya está ordenado).
+    \item \textbf{Peor caso:} Infinito (si la generación aleatoria nunca produce un array ordenado).
+    \item \textbf{Caso promedio:} $O((n!)n)$.
+\end{itemize}
+
+\subsubsection{Pseudocódigo}
+\lstset{
+    basicstyle=\ttfamily\small,
+    frame=single,
+    numbers=left,
+    keywordstyle=\bfseries,
+    morekeywords={si,entonces,para,hacer,fin,mientras}
+}
+\begin{verbatim}
+BogoSort(A)
+  mientras noEstáOrdenado(A) hacer
+    permutarAleatoriamente(A)
+  fin mientras
+fin
+
+noEstáOrdenado(A)
+  para i ← 1 hasta longitud(A)-1 hacer
+    si A[i-1] > A[i] entonces
+      retornar verdadero
+    fin si
+  fin para
+  retornar falso
+fin
+\end{verbatim}
+
+\subsection{Implementaciones}
+
+\subsubsection{Implementación en C}
+\lstset{language=C}
+\begin{lstlisting}
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <time.h>
+
+// Funcion para verificar si el array esta ordenado
+bool isSorted(int arr[], int n) {
+    for (int i = 1; i < n; i++) {
+        if (arr[i - 1] > arr[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Funcion para permutar aleatoriamente el array
+void shuffle(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        int r = rand() % n;
+        int temp = arr[i];
+        arr[i] = arr[r];
+        arr[r] = temp;
+    }
+}
+
+// Bogo Sort
+void bogoSort(int arr[], int n) {
+    while (!isSorted(arr, n)) {
+        shuffle(arr, n);
+    }
+}
+
+// Imprimir un array
+void printArray(int arr[], int n) {
+    for (int i = 0; i < n; i++) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    srand(time(0));
+
+    int arr[] = {3, 2, 5, 1, 4};
+    int n = sizeof(arr) / sizeof(arr[0]);
+
+    printf("Array original:\n");
+    printArray(arr, n);
+
+    bogoSort(arr, n);
+
+    printf("Array ordenado:\n");
+    printArray(arr, n);
+
+    return 0;
+}
+\end{lstlisting}
+
+\subsubsection{Implementación en Python}
+\lstset{language=Python}
+\begin{lstlisting}
+import random
+
+# Funcion para verificar si el array esta ordenado
+def is_sorted(arr):
+    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))
+
+# Bogo Sort
+def bogo_sort(arr):
+    while not is_sorted(arr):
+        random.shuffle(arr)
+
+# Ejemplo de uso
+arr = [3, 2, 5, 1, 4]
+print("Array original:", arr)
+bogo_sort(arr)
+print("Array ordenado:", arr)
+\end{lstlisting}
+
+\subsubsection{Conclusión}
+Bogo Sort es un algoritmo extremadamente ineficiente, cuyo uso práctico está limitado a fines educativos y humorísticos. Debido a su complejidad promedio de $O((n!)n)$, no es adecuado para ningún propósito realista.
+
+
 \printnotes*
 
 
